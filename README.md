@@ -26,8 +26,8 @@ Este repositório contém uma coleção de prompts especializados ("skills") uti
 - *(Em breve)*
 
 ### 🏗️ Infraestrutura
-*Dockerfile, docker-compose, k8s, terraform, ci/cd.*
-- *(Em breve)*
+*Infraestrutura e desenvolvimento orientado por especificações (Dockerfile, docker-compose, k8s, terraform, ci/cd, spec-driven workflows).*
+- [spec-driven-commands](./spec-driven-commands/README.md)
 
 ### 🔧 Utils
 *Commits, PR, Code Review.*
