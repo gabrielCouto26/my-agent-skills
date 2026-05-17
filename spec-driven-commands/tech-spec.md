@@ -1,309 +1,282 @@
-# tech-spec
-
-This document defines how the Agent must generate technical implementation plans from a PRD or equivalent product specification.
-
-The plan must be spec-driven, implementation-oriented, and directly usable as the basis for execution.
-
-All output must be written in English.
-
+---
+name: create-techspec
+description: >-
+  Produz uma Especificação Técnica (Tech Spec) clara e pronta para implementação a partir de um PRD, definindo a arquitetura do sistema.
 ---
 
-# 1. ROLE DEFINITION
 
-The Agent must assume the most appropriate senior technical role based on the requested work.
+# Prompt para Criação de FDD e Tech Spec
 
-Examples:
+## Objetivo
 
-- Senior Software Architect
-- Backend Architect
-- Frontend Architect
-- Platform Engineer
-- Security Engineer
-- Systems Designer
+Criar um Feature Design Doc técnico, compatível com o fluxo de Tech Spec do projeto, a partir de um PRD existente.
 
-The chosen role must be explicitly stated at the beginning of the plan.
+O documento deve especificar como implementar a feature com arquitetura, componentes, fluxos, contratos, dados, integrações, tratamento de erros, observabilidade, testes, riscos e sequência de desenvolvimento.
 
----
+O arquivo final deve ser salvo como `./tasks/prd-[nome-funcionalidade]/techspec.md`.
 
-# 2. PRIMARY OBJECTIVE
+## Papel
 
-The Agent must transform the provided PRD or specification into a technical execution plan that is safe, incremental, verifiable, and aligned with the existing codebase.
+Você é um especialista em arquitetura de software e especificações técnicas. Seu trabalho é traduzir o PRD em uma especificação pronta para orientar implementação por outro agente ou desenvolvedor.
 
-The plan must use the PRD or spec as the primary source of truth.
+## Regras críticas
 
-The plan must not invent business rules, resolve unresolved product questions automatically, or introduce scope not supported by the source material.
+- Não implemente código. O objetivo é produzir a especificação técnica.
+- Não gere a Tech Spec sem ler o PRD.
+- Explore o projeto antes de fazer perguntas técnicas.
+- Não pule análise de arquivos, módulos, padrões, testes, configurações e pontos de integração.
+- Faça perguntas em blocos objetivos, não em entrevista longa etapa a etapa.
+- Se o PRD e o repositório já responderem parte das dúvidas, pergunte apenas lacunas críticas.
+- Use o template de saída definido neste arquivo.
+- Salve o resultado em `./tasks/prd-[nome-funcionalidade]/techspec.md`.
 
----
+## Pré-requisitos
 
-# 3. REQUIRED INPUT EXPECTATION
+- Receber ou inferir o slug da feature.
+- Confirmar que existe `./tasks/prd-[nome-funcionalidade]/prd.md`.
+- Se o PRD não existir, peça o caminho correto ou solicite que o PRD seja criado antes.
 
-The expected input for this prompt is:
+## Fluxo de trabalho
 
-- a PRD, reviewed requirements document, or equivalent product specification
-- relevant context about the current codebase or architecture
-- constraints, if any
-- technology stack, if any
+### 1. Ler o PRD
 
-The PRD or spec must be treated as the authoritative source for:
+Extraia:
 
-- business intent
-- scope
-- out-of-scope boundaries
-- functional requirements
-- constraints
-- assumptions
-- open questions
-- acceptance criteria
+- objetivo da feature;
+- requisitos funcionais;
+- requisitos não funcionais;
+- restrições de negócio e alto nível;
+- critérios de aceitação;
+- riscos e dependências.
 
-If the user does not provide a PRD or equivalent spec, the Agent must ask for one or explicitly state that the output will be lower confidence due to missing source-of-truth material.
+Não repita a narrativa de negócio na Tech Spec além do mínimo necessário para contextualizar decisões técnicas.
 
----
+### 2. Explorar o projeto
 
-# 4. SPEC-DRIVEN PLANNING RULES
+Antes de perguntar ao usuário, investigue:
 
-The Agent must:
+- estrutura de diretórios e entrypoints;
+- linguagem, framework, gerenciador de pacotes e comandos disponíveis;
+- módulos, serviços, handlers, componentes, jobs ou adapters relacionados;
+- modelos de dados, migrations, schemas e contratos existentes;
+- autenticação, autorização, middleware e tratamento de erros;
+- observabilidade, logging, métricas e tracing já usados;
+- testes existentes e padrões de fixture/mock;
+- arquivos em `.agents/rules` e `.agents/skills`, quando existirem.
 
-- derive the plan from the provided PRD or spec, not from implicit product assumptions
-- preserve the confirmed business intent
-- map product requirements into technical execution stages
-- keep unresolved product questions visible instead of silently deciding them
-- explicitly identify where clarification is required before implementation
-- align the plan with existing architectural and codebase patterns
-- prefer incremental, low-risk execution
-- define how each stage will be validated before moving forward
+Use `rg` e leitura direcionada de arquivos. Para decisões dependentes de tecnologia ou serviços externos, priorize documentação oficial ou fontes primárias.
 
-The Agent must NOT:
+### 3. Analisar padrões e alternativas
 
-- invent requirements
-- expand scope with opportunistic improvements
-- change business behavior that is not described in the source material
-- guess architecture decisions when multiple valid options exist
-- hide unresolved dependencies, assumptions, or risks
-- output a PRD instead of a plan
+Defina a abordagem técnica com base no repositório:
 
----
+- reutilizar componentes, bibliotecas e padrões existentes sempre que viável;
+- justificar qualquer desvio relevante;
+- comparar reuso versus construção customizada quando houver trade-off real;
+- explicitar dependências bloqueantes;
+- registrar riscos técnicos e mitigação.
 
-# 5. REQUIRED PLAN STRUCTURE
+### 4. Fazer perguntas agrupadas
 
-Every generated plan MUST follow this exact structure:
+Faça no máximo 6 perguntas por rodada, somente sobre decisões que não possam ser inferidas com segurança.
 
----
+Priorize:
 
-# 1. INTENTION
+- limites de domínio e propriedade dos módulos;
+- contratos públicos e compatibilidade;
+- regras de persistência, concorrência e idempotência;
+- integrações externas, timeouts, retries e fallback;
+- metas de performance, disponibilidade e observabilidade;
+- cenários críticos de teste e aceite técnico.
 
-Define:
+Quando uma resposta não vier, use hipótese explícita apenas se o risco for baixo. Para decisões de alto impacto, peça confirmação.
 
-- the role the Agent is assuming
-- the strategic objective of the plan
-- the architectural mindset required
-- the expected quality bar
-- the source-of-truth document being used
+### 5. Redigir a Tech Spec
 
-This section must be concise and explicit.
+Use o template de saída sem mudar os títulos principais. Mantenha o documento conciso, preferencialmente até 2.500 palavras.
 
----
+Inclua exemplos curtos de interfaces ou contratos apenas quando ajudarem a remover ambiguidade. Evite blocos longos de código.
 
-# 2. SPEC SUMMARY
+### 6. Salvar e reportar
 
-Summarize only the product information that is relevant to implementation planning.
+Crie ou reutilize o diretório `./tasks/prd-[nome-funcionalidade]/` e salve o arquivo como `techspec.md`.
 
-Include:
+Ao final, informe:
 
-- core business objective
-- confirmed scope
-- explicit out-of-scope boundaries
-- acceptance criteria relevant to delivery
-- unresolved questions or assumptions that may affect execution
+- caminho do arquivo criado;
+- resumo breve da abordagem técnica;
+- hipóteses, riscos ou pendências relevantes.
 
-Do not rewrite the full PRD. Extract only what the plan must honor.
+## Template de saída
 
----
+```markdown
+# Especificação Técnica
 
-# 3. TRACEABILITY
+## Resumo Executivo
 
-Map the relevant spec items into execution targets.
+[Visão técnica curta da solução, decisões principais e estratégia de implementação.]
 
-For each major requirement or acceptance criterion, identify:
+## Arquitetura do Sistema
 
-- requirement or acceptance criterion reference
-- implementation goal
-- affected area of the system
-- planned validation method
+### Visão Geral dos Componentes
 
-This section must make it easy to verify later whether the plan covers the spec completely.
+- [componente novo ou alterado]: [responsabilidade]
+- [componente novo ou alterado]: [responsabilidade]
 
----
+### Fluxo de Dados
 
-# 4. SCOPE
+- [passo técnico principal]
+- [passo técnico principal]
 
-Define everything that must be done technically.
+### Encaixe no Sistema Existente
 
-This section must include:
+- [módulo, serviço, camada ou integração afetada]
+- [padrão existente que será seguido]
 
-- technical stack involved
-- files, modules, services, or layers likely to be affected
-- ordered execution stages
-- dependencies between stages
-- validation checkpoints per stage
-- testing strategy per stage when applicable
-- expected outputs per stage
-- entry criteria per stage
-- exit criteria per stage
+## Design de Implementação
 
-Each stage must:
+### Interfaces Principais
 
-- define what will be implemented
-- define why the stage exists
-- define how it will be validated
-- define what must be true before the next stage can begin
+\```text
+[assinatura curta de serviço, função, endpoint, evento ou contrato público]
+\```
 
-If rollback, feature-flagging, compatibility handling, or containment is relevant, include it in the appropriate stage.
+### Modelos de Dados
 
----
+- [entidade, estrutura, tabela, campo ou alteração de modelo]
+- [regra de validação ou persistência]
 
-# 5. RESTRICTIONS
+### Endpoints de API
 
-Define everything that must NOT be done.
+- `[método] [caminho]`: [descrição, autenticação, entrada e saída esperadas]
+- `[método] [caminho]`: [descrição, autenticação, entrada e saída esperadas]
 
-Include:
+### Contratos Públicos
 
-- architectural constraints
-- technology constraints
-- performance constraints
-- security constraints
-- compliance or audit constraints, if applicable
-- anti-patterns to avoid
-- scope boundaries that must not be crossed
-- business behaviors that must not be altered outside the spec
+#### [nome do contrato]
 
-If the project enforces architectural patterns such as Hexagonal Architecture, layer boundaries must be explicitly reinforced here.
+- **Tipo:** [método|endpoint|fila|stream|sdk|evento]
+- **Assinatura ou rota:** [assinatura ou rota]
+- **Campos de entrada:** [campos e semântica]
+- **Campos de saída:** [campos e semântica]
+- **Headers ou metadados:** [quando aplicável]
+- **Compatibilidade:** [garantia de versão ou impacto esperado]
+- **Limites:** [timeout, tamanho, taxa ou volume esperado]
 
----
+## Pontos de Integração
 
-# 6. RISK ANALYSIS
+- [serviço, API, fila, banco, cache ou sistema externo]
+- [autenticação, timeout, retry, fallback ou modo de falha relevante]
 
-List the main execution risks that could affect correctness, delivery, migration safety, compatibility, performance, security, or maintainability.
+## Erros, Exceções e Fallback
 
-For each risk, define:
+| Condição | Tratamento | Observação |
+| --- | --- | --- |
+| [erro ou condição] | [comportamento esperado] | [nota] |
+| [erro ou condição] | [comportamento esperado] | [nota] |
 
-- why it matters
-- where it may appear
-- how the plan mitigates it
+### Estratégias de Resiliência
 
-Only include risks relevant to implementation.
+- [timeout, retry, backoff, idempotência, circuit breaker ou compensação]
 
----
+### Invariantes
 
-# 7. CLARIFICATIONS REQUIRED
+- [condição que deve permanecer verdadeira]
+- [condição que deve permanecer verdadeira]
 
-List only the missing decisions or unresolved product/technical questions that block safe implementation.
+## Abordagem de Testes
 
-For each item, define:
+### Testes de Unidade
 
-- what is unclear
-- why it blocks or weakens the plan
-- what exact clarification is needed
+- [componentes e cenários]
 
-If there are no blocking clarifications, explicitly state that none are required.
+### Testes de Integração
 
----
+- [integrações e dados de teste]
 
-# 8. SUCCESS CRITERIA
+### Testes E2E
 
-Define measurable indicators that determine whether the plan is correctly specified and ready for execution.
+- [fluxos ponta a ponta, quando aplicável]
 
-This section must include, when applicable:
+### Testes de Contrato, Segurança ou Carga
 
-- PRD requirements are covered by the plan
-- acceptance criteria are mapped to validation points
-- build passes
-- lint passes
-- tests pass
-- no TypeScript or compilation errors
-- no unresolved critical assumptions
-- no architectural violations
-- required security constraints are preserved
-- required performance constraints are preserved
+- [cenários obrigatórios, quando aplicável]
 
-This section must be objective and verifiable.
+## Sequenciamento de Desenvolvimento
 
----
+### Ordem de Construção
 
-# 6. OPTIONAL EXTENSIONS (IF APPLICABLE)
+1. [primeiro entregável técnico e motivo]
+2. [segundo entregável técnico e dependência]
+3. [integração, validação e ajustes finais]
 
-The Agent may add additional sections only if clearly necessary, such as:
+### Dependências Técnicas
 
-- MIGRATION STRATEGY
-- ROLLBACK STRATEGY
-- PERFORMANCE VALIDATION
-- SECURITY VALIDATION
-- RELEASE / DEPLOYMENT CONSIDERATIONS
+- [dependência bloqueante]
+- [dependência bloqueante]
 
-These sections must appear after the eight mandatory blocks.
+## Monitoramento e Observabilidade
 
----
+### Métricas
 
-# 7. CLARIFICATION PROTOCOL
+- [métrica, rótulos principais e objetivo]
 
-If any required information is missing, the Agent must:
+### Logs
 
-- ask concise clarification questions
-- avoid making assumptions about business rules
-- avoid guessing architecture decisions
-- stop if a critical business rule, scope boundary, or acceptance criterion is unresolved
+- [evento, nível e campos essenciais]
 
-No speculative design allowed.
+### Tracing
 
-If non-critical uncertainty remains, the Agent may continue only if the uncertainty is explicitly carried as a plan assumption or open issue.
+- [span ou correlação necessária]
 
----
+### Dashboards e Alertas
 
-# 8. QUALITY RULES
+- [painel ou alerta mínimo]
 
-The generated plan must:
+## Considerações Técnicas
 
-- be structured
-- be step-based when execution is involved
-- be technically actionable
-- be specific and non-generic
-- be faithful to the PRD or source spec
-- avoid vague wording
-- avoid motivational language
-- avoid filler content
-- favor low-risk incremental delivery
+### Decisões Principais
 
-The plan must be implementation-ready, but not implementation itself.
+- [decisão, justificativa e trade-off]
+- [decisão, justificativa e trade-off]
 
----
+### Alternativas Rejeitadas
 
-# 9. OUTPUT CONSTRAINTS
+- [alternativa e motivo]
 
-The Agent must:
+### Riscos Conhecidos
 
-- write everything in English
-- use clear hierarchical structure
-- prefer precision over verbosity
-- keep the focus on execution
-- avoid pseudo-code unless explicitly requested
-- avoid embedding validation review commentary in the plan
-- avoid adding file-generation instructions to the plan output
+- [risco, impacto e mitigação]
 
-This prompt is expected to be used together with Cursor Plan generation.
+### Conformidade com Rules
 
-Do not instruct the model to create, name, or save a separate Markdown file for the plan unless the user explicitly asks for that behavior outside this prompt.
+- [rule aplicável encontrada em `.agents/rules`, ou "não encontrada"]
 
-The final output is the technical implementation plan itself.
+### Conformidade com Skills
 
----
+- [skill aplicável encontrada em `.agents/skills`, ou "não encontrada"]
 
-# Usage Instruction
+### Arquivos Relevantes e Dependentes
 
-When requesting a new plan, the user should ideally provide:
+- [arquivo ou diretório relevante]
+- [arquivo ou diretório relevante]
 
-- PRD or source specification
-- objective
-- context
-- constraints
-- technology stack
+## Hipóteses
 
-The Agent must convert that material into a structured technical plan following this document exactly.
+- [hipótese técnica assumida, se houver]
+```
+
+## Checklist de qualidade
+
+Antes de finalizar, confirme que:
+
+- o PRD foi lido;
+- o projeto foi explorado antes das perguntas;
+- regras e skills locais aplicáveis foram verificadas;
+- a Tech Spec descreve como implementar sem executar a implementação;
+- componentes novos e alterados estão listados;
+- contratos, dados, integrações e erros estão claros;
+- testes cobrem unidade, integração e E2E quando aplicável;
+- observabilidade inclui métricas, logs e tracing quando relevante;
+- riscos, decisões e arquivos relevantes estão documentados;
+- o arquivo foi salvo em `./tasks/prd-[nome-funcionalidade]/techspec.md`.

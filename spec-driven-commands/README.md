@@ -1,20 +1,83 @@
 # Spec-Driven Commands
 
-Esta pasta contém uma coleção de prompts especializados para desenvolvimento orientado por especificações, seguindo um fluxo estruturado de avaliação, planejamento e validação técnica.
+Esta pasta contém prompts para um fluxo de desenvolvimento orientado por especificação, cobrindo definição de produto, desenho técnico, decomposição em tarefas e revisão final da implementação.
+
+## Fluxo Atual
+
+O fluxo atualizado desta pasta é:
+
+1. `tech-prd.md`
+2. `tech-spec.md`
+3. `tech-tasks.md`
+4. `tech-review.md`
+
+Cada prompt gera ou consome artefatos dentro de `./tasks/prd-[nome-funcionalidade]/`, mantendo rastreabilidade entre requisito, desenho técnico, plano de execução e validação final.
 
 ## Prompts Disponíveis
 
-### 1. spec-evaluation
-Prompt para atuar como revisor de requisitos de produto e regras de negócio. Avalia a qualidade, clareza, consistência e confiabilidade das informações fornecidas, identificando ambiguidades, faltas, inconsistências e suposições ocultas. Atua como uma camada de validação antes da geração de PRD, produzindo um arquivo de rascunho para revisão.
+### 1. `tech-prd.md`
 
-### 2. spec-prd
-Prompt para gerar um Documento de Requisitos de Produto (PRD) final a partir de entrada revisada. Consolida informações confirmadas, preserva a intenção de negócio e expõe itens não resolvidos, otimizando para entrega técnica e planejamento de implementação.
+Prompt de criação de PRD.
 
-### 3. tech-spec
-Prompt para transformar um PRD ou especificação em um plano de execução técnica. O agente assume um papel técnico sênior apropriado e gera um plano seguro, incremental, verificável e alinhado com o codebase existente, usando o PRD como fonte primária de verdade.
+- Nome interno: `create-prd`
+- Objetivo: transformar uma solicitação de feature em um Product Requirements Document claro, completo e acionável
+- Saída esperada: `./tasks/prd-[nome-funcionalidade]/prd.md`
+- Foco: problema, público-alvo, escopo, requisitos funcionais, requisitos não funcionais, riscos, critérios de aceitação e hipóteses
 
-### 4. tech-plan-validator
-Prompt para validar um plano de implementação técnica contra o PRD, codebase atual e padrões estabelecidos. Identifica problemas de cobertura, suposições inseguras e problemas de sequenciamento, aplicando correções diretamente no arquivo do plano quando possível.
+### 2. `tech-spec.md`
 
-### 5. tech-implementation-validator
-Prompt para auditar uma implementação completa, verificando conformidade com o PRD, plano técnico validado, arquitetura do codebase e evidências executáveis (build, lint, testes). Identifica o que está correto, parcial, faltando ou divergente, produzindo um relatório de validação.
+Prompt de criação de Tech Spec / FDD.
+
+- Nome interno: `create-techspec`
+- Objetivo: traduzir o PRD em uma especificação técnica pronta para implementação
+- Entrada principal: `./tasks/prd-[nome-funcionalidade]/prd.md`
+- Saída esperada: `./tasks/prd-[nome-funcionalidade]/techspec.md`
+- Foco: arquitetura, componentes, fluxo de dados, contratos, integrações, tratamento de erros, observabilidade, testes, riscos e sequência de desenvolvimento
+
+### 3. `tech-tasks.md`
+
+Prompt de decomposição em tarefas.
+
+- Nome interno: `create-tasks`
+- Objetivo: quebrar PRD e Tech Spec em tarefas pequenas, sequenciadas, testáveis e rastreáveis
+- Entradas principais:
+  - `./tasks/prd-[nome-funcionalidade]/prd.md`
+  - `./tasks/prd-[nome-funcionalidade]/techspec.md`
+- Saídas esperadas:
+  - `./tasks/prd-[nome-funcionalidade]/tasks.md`
+  - `./tasks/prd-[nome-funcionalidade]/1_task.md`, `2_task.md`, etc.
+- Observação importante: antes de gerar os arquivos, o prompt exige apresentar uma proposta high-level e aguardar aprovação explícita do usuário
+
+### 4. `tech-review.md`
+
+Prompt de review técnico da implementação.
+
+- Nome interno: `execute-review`
+- Objetivo: auditar a implementação concluída contra PRD, Tech Spec, Tasks, rules, skills, diff Git e validações executáveis
+- Entradas principais:
+  - `./tasks/prd-[nome-funcionalidade]/prd.md`
+  - `./tasks/prd-[nome-funcionalidade]/techspec.md`
+  - `./tasks/prd-[nome-funcionalidade]/tasks.md`
+- Saída esperada: `./tasks/prd-[nome-funcionalidade]/codereview.md`
+- Foco: aderência ao escopo, cobertura dos critérios de aceitação, conformidade técnica, mudanças fora de escopo e evidência por build, lint, typecheck e testes
+
+## Estrutura de Artefatos
+
+Para cada funcionalidade, o fluxo espera um diretório no formato:
+
+```text
+./tasks/prd-[nome-funcionalidade]/
+```
+
+Arquivos gerados ao longo do processo:
+
+- `prd.md`
+- `techspec.md`
+- `tasks.md`
+- `[n]_task.md`
+- `codereview.md`
+
+## Observações
+
+- Os nomes descritos neste README refletem os arquivos atualmente existentes na pasta.
+- O fluxo anterior com prompts como `spec-evaluation`, `spec-prd`, `tech-plan-validator` e `tech-implementation-validator` não corresponde mais ao conteúdo atual deste diretório.
