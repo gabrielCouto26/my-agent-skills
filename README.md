@@ -14,22 +14,21 @@ Este repositório contém uma coleção de prompts especializados ("skills") uti
 
 ### 📄 Documentação
 *Criação e manutenção de Design Docs e contexto do projeto.*
+- [adr-generator](./documentacao/adr-generator/SKILL.md)
 - [state-local](./documentacao/state-local/Doc.md)
 
 ### 🛠️ Implementação
 *Workflow de desenvolvimento, testes automatizados, correção de bugs, refatoração.*
 - [tester](./implementacao/tester/Doc.md)
 - [resolver](./implementacao/resolver/Doc.md)
+- [spec-driven-commands](./implementacao/spec-driven-commands/README.md)
 
 ### 🧩 Especialização
-*Desenvolver em tecnologias específicas (GO, Spring, Laravel, Langgraph).*
+*Desenvolver em tecnologias específicas (GO, Spring, Laravel, Langgraph).* 
 - *(Em breve)*
 
-### 🏗️ Infraestrutura
-*Infraestrutura e desenvolvimento orientado por especificações (Dockerfile, docker-compose, k8s, terraform, ci/cd, spec-driven workflows).*
-- [spec-driven-commands](./spec-driven-commands/README.md)
-
 ### 🔧 Utils
-*Commits, PR, Code Review.*
+*Commits, PR, Code Review, integrações.*
 - [create-pr](./utils/create-pr/Doc.md)
 - [review-commit](./utils/review-commit/Doc.md)
+- [jira](./utils/jira/SKILL.md)
